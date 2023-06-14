@@ -45,6 +45,7 @@ export class CeilingFanAccessory implements BondAccessory  {
     const fanSpeedValues = config.fan_speed_values;
     const includeDimmer = config.include_dimmer;
     const includeToggle = config.include_toggle_state;
+    const includeLights = config.include_cf_light;
     const device: Device = accessory.context.device;
 
     this.values = Device.fanSpeeds(device);
@@ -68,50 +69,62 @@ export class CeilingFanAccessory implements BondAccessory  {
       }
     }
 
-    if (Device.CFhasUpDownLight(device)) {
-      this.upLightService = new LightbulbService(platform, accessory, `${accessory.displayName} Up Light`, 'UpLight');
-      this.downLightService = new LightbulbService(platform, accessory, `${accessory.displayName} Down Light`, 'DownLight');
+    if (includeLights) {
+      if (Device.CFhasUpDownLight(device)) {
+        this.upLightService = new LightbulbService(platform, accessory, `${accessory.displayName} Up Light`, 'UpLight');
+        this.downLightService = new LightbulbService(platform, accessory, `${accessory.displayName} Down Light`, 'DownLight');
 
-      if (includeToggle) {
-        this.toggleUpLightService = new ButtonService(platform, accessory, 'Toggle Up Light State', 'ToggleUpLight');
-        this.toggleDownLightService = new ButtonService(platform, accessory, 'Toggle Down Light State', 'ToggleDownLight');
-      } else {
-        // Remove services if previously added
-        this.removeService('Toggle Up Light State');
-        this.removeService('Toggle Down Light State');
-      } 
+        if (includeToggle) {
+          this.toggleUpLightService = new ButtonService(platform, accessory, 'Toggle Up Light State', 'ToggleUpLight');
+          this.toggleDownLightService = new ButtonService(platform, accessory, 'Toggle Down Light State', 'ToggleDownLight');
+        } else {
+          // Remove services if previously added
+          this.removeService('Toggle Up Light State');
+          this.removeService('Toggle Down Light State');
+        } 
 
-      if (includeDimmer && Device.HasDimmer(device)) {
-        this.upLightDimmerService = new SwitchService(platform, accessory, `${accessory.displayName} Up Light Dimmer`, 'UpLight');
-        this.downLightDimmerService = new SwitchService(platform, accessory, `${accessory.displayName} Down Light Dimmer`, 'DownLight');
-      } else {
-        // Remove services if previously added
-        this.removeService(`${accessory.displayName} Up Light Dimmer`);
-        this.removeService(`${accessory.displayName} Down Light Dimmer`);
+        if (includeDimmer && Device.HasDimmer(device)) {
+          this.upLightDimmerService = new SwitchService(platform, accessory, `${accessory.displayName} Up Light Dimmer`, 'UpLight');
+          this.downLightDimmerService = new SwitchService(platform, accessory, `${accessory.displayName} Down Light Dimmer`, 'DownLight');
+        } else {
+          // Remove services if previously added
+          this.removeService(`${accessory.displayName} Up Light Dimmer`);
+          this.removeService(`${accessory.displayName} Down Light Dimmer`);
+        }
+      } else if (Device.CFhasLightbulb(device)) {
+        this.lightService = new LightbulbService(platform, accessory, `${accessory.displayName} Light`);
+        if (includeToggle) {
+          this.toggleLightService = new ButtonService(platform, accessory, 'Toggle Light State', 'ToggleState');
+        } else {
+          this.removeService('Toggle Light State');
+        } 
+
+        if (includeDimmer && Device.HasDimmer(device)) {
+          this.dimmerService = new SwitchService(platform, accessory, `${accessory.displayName} Dimmer`, 'Dimmer');
+        } else {
+          // Remove service if previously added
+          this.removeService(`${accessory.displayName} Dimmer`);
+        }
       }
-    } else if (Device.CFhasLightbulb(device)) {
-      this.lightService = new LightbulbService(platform, accessory, `${accessory.displayName} Light`);
-      if (includeToggle) {
-        this.toggleLightService = new ButtonService(platform, accessory, 'Toggle Light State', 'ToggleState');
-      } else {
-        this.removeService('Toggle Light State');
-      } 
 
-      if (includeDimmer && Device.HasDimmer(device)) {
-        this.dimmerService = new SwitchService(platform, accessory, `${accessory.displayName} Dimmer`, 'Dimmer');
+      if (includeDimmer && Device.HasSeparateDimmers(device)) {
+        this.increaseBrightnessService = new SwitchService(platform, accessory, `${accessory.displayName} Increase Brightness`, 'IncreaseBrightness');
+        this.decreaseBrightnessService = new SwitchService(platform, accessory, `${accessory.displayName} Decrease Brightness`, 'DecreaseBrightness');
       } else {
         // Remove service if previously added
-        this.removeService(`${accessory.displayName} Dimmer`);
+        this.removeService(`${accessory.displayName} Increase Brightness`);
+        this.removeService(`${accessory.displayName} Decrease Brightness`);
       }
-    }
-
-    if (includeDimmer && Device.HasSeparateDimmers(device)) {
-      this.increaseBrightnessService = new SwitchService(platform, accessory, `${accessory.displayName} Increase Brightness`, 'IncreaseBrightness');
-      this.decreaseBrightnessService = new SwitchService(platform, accessory, `${accessory.displayName} Decrease Brightness`, 'DecreaseBrightness');
     } else {
-      // Remove service if previously added
+      // Remove all light services if perviously added 
+      this.removeService('Toggle Up Light State');
+      this.removeService('Toggle Down Light State');
+      this.removeService(`${accessory.displayName} Up Light Dimmer`);
+      this.removeService(`${accessory.displayName} Down Light Dimmer`);
+      this.removeService('Toggle Light State');
+      this.removeService(`${accessory.displayName} Dimmer`);
       this.removeService(`${accessory.displayName} Increase Brightness`);
-      this.removeService(`${accessory.displayName} Decrease Brightness`);
+      this.removeService(`${accessory.displayName} Decrease Brightness`);      
     }
 
     this.observe(bond);

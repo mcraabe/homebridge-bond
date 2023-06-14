@@ -47,6 +47,13 @@
         "required": false,
         "description": "If dimming is a valid action on a device, it will be included as additional switch on the accessory. Since this is an odd solution to dimming, it's off by default."
       },
+      "include_cf_light": {
+        "title": "Include Ceiling Fan Light",
+        "type": "boolean",
+        "default": true,
+        "required": true,
+        "description": "Unchecking this will hide ALL Ceiling Fan Light accessories and actions in HomeKit for all Ceiling Fans."
+      },
       "include_toggle_state": {
         "title": "Include toggle switch for fixing device state.",
         "type": "boolean",

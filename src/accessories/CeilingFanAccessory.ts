@@ -117,6 +117,9 @@ export class CeilingFanAccessory implements BondAccessory  {
       }
     } else {
       // Remove all light services if perviously added 
+      this.removeService(`${accessory.displayName} Up Light`);
+      this.removeService(`${accessory.displayName} Down Light`);
+      this.removeService(`${accessory.displayName} Light`);
       this.removeService(`${accessory.displayName} Toggle Up Light State`);
       this.removeService(`${accessory.displayName} Toggle Down Light State`);
       this.removeService(`${accessory.displayName} Up Light Dimmer`);

@@ -79,8 +79,8 @@ export class CeilingFanAccessory implements BondAccessory  {
           this.toggleDownLightService = new ButtonService(platform, accessory, 'Toggle Down Light State', 'ToggleDownLight');
         } else {
           // Remove services if previously added
-          this.removeService('Toggle Up Light State');
-          this.removeService('Toggle Down Light State');
+          this.removeService(`${accessory.displayName} Toggle Up Light State`);
+          this.removeService(`${accessory.displayName} Toggle Down Light State`);
         } 
 
         if (includeDimmer && Device.HasDimmer(device)) {
@@ -96,7 +96,7 @@ export class CeilingFanAccessory implements BondAccessory  {
         if (includeToggle) {
           this.toggleLightService = new ButtonService(platform, accessory, 'Toggle Light State', 'ToggleState');
         } else {
-          this.removeService('Toggle Light State');
+          this.removeService(`${accessory.displayName} Toggle Light State`);
         } 
 
         if (includeDimmer && Device.HasDimmer(device)) {
@@ -117,11 +117,11 @@ export class CeilingFanAccessory implements BondAccessory  {
       }
     } else {
       // Remove all light services if perviously added 
-      this.removeService('Toggle Up Light State');
-      this.removeService('Toggle Down Light State');
+      this.removeService(`${accessory.displayName} Toggle Up Light State`);
+      this.removeService(`${accessory.displayName} Toggle Down Light State`);
       this.removeService(`${accessory.displayName} Up Light Dimmer`);
       this.removeService(`${accessory.displayName} Down Light Dimmer`);
-      this.removeService('Toggle Light State');
+      this.removeService(`${accessory.displayName} Toggle Light State`);
       this.removeService(`${accessory.displayName} Dimmer`);
       this.removeService(`${accessory.displayName} Increase Brightness`);
       this.removeService(`${accessory.displayName} Decrease Brightness`);      
